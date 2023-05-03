@@ -216,7 +216,11 @@ export class Proxy6Client {
       method:'GET',
       agent: this.proxyOptions && new SocksProxyAgent(this.proxyOptions)
     }));
-    return response.json();
+    const result = await response.json();
+    if (result.error) {
+      throw Object.assign(new Error(result.error), { code: result.error_id });
+    }
+    return result;
   }
   async ipinfo() {
     const response = (await fetch('https://ipinfo.io/json', {
